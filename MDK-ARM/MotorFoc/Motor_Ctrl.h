@@ -27,7 +27,7 @@ typedef struct
 {
     float M_theta;                  // 电机转子机械角度
     float E_theta;                  // 电机转子电角度
-    float speed_M_rpm;              // 电机当前机械角速度	rpm/min
+    float speed_M_rpm;              // 电机当前机械角速度		rpm/min
     float speed_E_rpm;              // 电机当前电角速度		rpm/min
     volatile Motor_State_t state;   // 电机当前所处控制状态
     float Rs;                       // 电机的相电阻
@@ -38,7 +38,7 @@ typedef struct
 
 }Motor_CurrentState_t;  
 
-#define Motor_CurrentState_DEFAULTS {0.0f, 0.0f, 0.0f, 0.0f, STOP, 0.0f, 0.0f, 0.0f, 0.0f, 0} // 电机状态参数初始化
+#define Motor_CurrentState_DEFAULTS {0.0f, 0.0f, 0.0f, 0.0f , STOP, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f} // 电机状态参数初始化
 
 void Motor_Stop(void);
 void Motor_Start(void);

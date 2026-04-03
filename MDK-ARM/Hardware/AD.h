@@ -44,7 +44,7 @@ typedef struct
 #define AD_Ur ADC_Value[4]		// 电位器数值
 
 void ADC_Get_Drift(void);
-
+void ADC_Get_Data(void);
 extern uint16_t ADC_Value[5]; // 声明一个外部变量，用于存储ADC转换结果
 extern AdcParaFinal_t AdcParaFinal;
 

@@ -15,6 +15,17 @@
 //定时器参数
 #define TIM1_ARR_VALUE 8400  // 定时器1的ARR值，用于生成对称PWM
 #define TIM1_FRQ       20000        // 定时器1的中断频率20kHz,也就是0.05ms执行一次
+#define SpeedCount     4     // 定时器1中断计数器，4次中断计算一次转速，也就是0.2ms计算一次转速
+#define ENCODER_FRQ   (TIM1_FRQ / SpeedCount) * 60 // TIM1_FRQ/SpeedCount*60
+
+// 编码器参数
+#define ENCODE_LINES /******************/ 1024
+#define ENCODE_PULSE /******************/ (ENCODE_LINES * 4) // ENCO_LINES*4
+#define TIM3_PULSE /********************/ ENCODE_PULSE       // 定时器3重装载值
+
+//滤波参数
+#define LPF_U_A /***********************/ 0.015465039f // 截止频率100Hz
+#define LPF_U_B /***********************/ 0.984534961f
 
 #define Vr_Nmax        200      //电位器映射到转速的最大值
 #define PI			3.14159f	//Π值

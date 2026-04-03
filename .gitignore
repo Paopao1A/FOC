@@ -11,6 +11,8 @@
 *.sct
 *.dep
 *.lst
+*.json
+*.log
 
 # 忽略 Keil 的用户特定界面配置文件和调试配置
 *.uvguix.*
