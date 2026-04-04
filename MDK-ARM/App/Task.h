@@ -21,6 +21,7 @@
 #include "LED.h"
 #include "arm_math.h"
 #include "FOC_Sensorless.h"
+#include "PID.h"
 
 typedef struct
 {

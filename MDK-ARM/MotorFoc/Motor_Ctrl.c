@@ -41,10 +41,14 @@ void Motor_StateChoose(void)
 				break;
 			
 			case SPEED_OPENLOOP:
-				Speed_Openloop(spwm.Speed);//转速r/min
-				spwm.Ud=1.0f;
-				spwm.Uq=0;
+				Speed_Openloop(spwm.Speed);//机械角度转速r/min
+				spwm.Ud=0.0f;
+				spwm.Uq=1.0f;
 				SPWM_Calc(&spwm);
+				break;
+			
+			case SPEED_LOOP:
+				Speed_Closeloop(spwm.Speed);//机械角度转速r/min
 				break;
 			
 			case STOP:

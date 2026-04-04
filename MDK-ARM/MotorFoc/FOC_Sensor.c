@@ -1,5 +1,6 @@
 #include "task.h"
 
+
 void PostionToZeroDouble(void)
 {
     /* 启动PWM输出 */
@@ -36,4 +37,26 @@ void PostionToZeroDouble(void)
     Motor_CurrentState.speed_M_rpm=0;//此时机械角度设置为0
     Motor_CurrentState.speed_E_rpm=0;//此时电角度设置为0
     Motor_Stop();
+}
+
+void Speed_Closeloop(float TargetSpeed)
+{
+    static uint8_t Speed_CulCount=0;
+    Speed_CulCount++;
+
+    if(Speed_CulCount == 20)//FOC定时器20khz，我们设定0.2ms获取一次速度，1ms计算一次PID
+    {
+        Speed_PID.target=TargetSpeed * MOTOR_P;//转化为电角度转速r/min
+        Speed_PID.actual=Motor_CurrentState.speed_E_rpm;
+
+        PID_Culculate(&Speed_PID);
+
+        spwm.Theta=Motor_CurrentState.E_theta;
+        spwm.Uq=Speed_PID.out;
+        spwm.Ud=0.0f;
+
+        SPWM_Calc(&spwm);
+        Speed_CulCount=0;
+    }
+    
 }

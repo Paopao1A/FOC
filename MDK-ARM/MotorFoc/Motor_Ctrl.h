@@ -10,8 +10,8 @@ typedef enum
     TO_ZERO=4,      // 校准状态
 
     /*有感FOC*/
-    SPEED_LOOP=1,   // 速度闭环状态
-    CUR_LOOP=2,     // 电流闭环状态
+    SPEED_LOOP=1,   // 速度闭环电流开环状态
+    CUR_LOOP=2,     // 速度和电流串级双闭环状态
     POS_LOOP=3,     // 位置闭环状态
 
     /*无感FOC*/

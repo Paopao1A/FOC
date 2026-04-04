@@ -4,11 +4,12 @@
 /*定义任务以及相关变量*/
 static task_t task[]=
 {
+    {0,1,1,VrTask},//电位器任务]
+
 #if VR_OR_PC
-    {0,1,1,VrTask},//电位器任务
-#else
     {0, 10, 10, RecevToVofa},//解析上位机数据任务
 #endif
+
     {0, 5, 5, HmiTask},	//人机交互任务
 };
 

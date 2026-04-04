@@ -15,7 +15,8 @@
                 "E:\\Keil5\\ARM\\ARMCC\\include\\rw",
                 "e:\\STM32project\\FOC\\FOC\\MDK-ARM",
                 "e:\\STM32project\\FOC\\FOC\\Drivers\\STM32F4xx_HAL_Driver\\Src",
-                "e:\\STM32project\\FOC\\FOC\\Core\\Src"
+                "e:\\STM32project\\FOC\\FOC\\Core\\Src",
+                "E:\\Keil5\\ARM\\PACK\\ARM\\CMSIS\\5.0.1\\CMSIS\\Include"
             ],
             "defines": [
                 "USE_HAL_DRIVER",

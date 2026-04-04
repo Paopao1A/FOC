@@ -7,6 +7,7 @@
 #define MOTOR_Rs  0.1f       // 电机内阻
 #define Ubus      12.0f      // 电源电压
 #define Nmax      7800       // 最大转速7800RPM(转/分钟)
+#define PI		  3.14159f	//Π值
 
 // 模式选择
 #define VR_OR_PC    1        // 1: VR电位器进行修改; 0: PC上位机进行修改
@@ -27,8 +28,13 @@
 #define LPF_U_A /***********************/ 0.015465039f // 截止频率100Hz
 #define LPF_U_B /***********************/ 0.984534961f
 
-#define Vr_Nmax        200      //电位器映射到转速的最大值
-#define PI			3.14159f	//Π值
+// 速度开环参数
+#define OPENSPD_REF_MAX        200      //电位器映射到转速的最大值
+
+// 速度环参数
+#define SPD_REF_TIMER /*****************/ 30   // 定义目标速度改变的梯度时间
+#define SPD_REF_OD /********************/ 5.0f // 定义目标速度改变的梯度值
+#define SPD_REF_MAX /*******************/ 4000 // 目标速度上限值，机械角速度
 
 void Motor_Config_Init(void);
 
