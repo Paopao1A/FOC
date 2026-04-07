@@ -34,7 +34,7 @@
 // 速度环参数
 #define SPD_REF_TIMER /*****************/ 30   // 定义目标速度改变的梯度时间
 #define SPD_REF_OD /********************/ 5.0f // 定义目标速度改变的梯度值
-#define SPD_REF_MAX /*******************/ 4000 // 目标速度上限值，机械角速度
+#define SPD_REF_MAX /*******************/ 600 // 目标速度上限值，机械角速度
 
 void Motor_Config_Init(void);
 

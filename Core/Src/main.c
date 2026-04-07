@@ -98,26 +98,17 @@ int main(void)
   MX_TIM3_Init();
   MX_USART1_UART_Init();
   MX_TIM4_Init();
-  
   /* USER CODE BEGIN 2 */
   task_init(); // 初始化任务
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	
-	/*测试SPWM波形是否正常，要把task_init()注释掉*/
-//   Key_Init();
-//   __HAL_TIM_CLEAR_IT(&htim1, TIM_IT_UPDATE);	 // 避免中断已开启就进入中断
-//	HAL_TIM_Base_Start_IT(&htim1);				 // 开启定时器1中断
-//   Motor_Config_Init();
-//   TimeSchFunc(FocTimCallback);
-//   HAL_Delay(100); // 等待系统稳定
-//   spwm.Ud=0;
-//   spwm.Uq=0.5f;
   while (1)
   {
-    task_loop(); // 循环执行任务
+    /* USER CODE END WHILE */
+			task_loop();
+    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }

@@ -76,6 +76,7 @@ void task_init(void)
     Hardware_Init();
     App_Init();
     Motor_Config_Init();
+		PID_Init();
 
     HAL_Delay(100); // 等待系统稳定
 
@@ -86,7 +87,7 @@ void task_init(void)
  	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_1 | TIM_CHANNEL_2); // 开启编码器使能函数
     HAL_ADC_Start_DMA(&hadc1, (uint32_t *)&ADC_Value, 5);		  // 开启ADC-DMA转换
     ADC_Get_Drift(); // 获取相电压零点偏移值
-    TurnOnLed(0); // 点亮蓝色LED,表示初始化完成
+    TurnOnLed(2); // 点亮蓝色LED,表示初始化完成
 }
 
 void task_loop(void)

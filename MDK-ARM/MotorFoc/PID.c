@@ -33,5 +33,6 @@ void PID_Init(void)
     Speed_PID.outmin=-6.0f;
     Speed_PID.accumlation_max=10000.0f;//积分限幅先调大，后续PID调好之后看波形再调整合适的幅值，PID参数在上位机接受任务调整
     Speed_PID.accumlation_min=-10000.0f;
+	  Speed_PID.kp=0.01f;
 
 }

@@ -14,7 +14,7 @@ void VrTask(void)
             break;
         
         case SPEED_LOOP:
-            Vr_TargetSpeed=AdcParaFinal.Vr / 4095.0f * SPD_REF_MAX;//把电位器数值映射到0-4000rpm
+            Vr_TargetSpeed=AdcParaFinal.Vr / 4095.0f * SPD_REF_MAX;//把电位器数值映射到0-6000rpm
             spwm.Speed=Vr_TargetSpeed;
             break;
 
@@ -52,7 +52,7 @@ void RecevToVofa(void)
 
 void SendToVofa(void)
 {
-    printf("%f,%f,%f\r\n",iclarke.Uu,iclarke.Uv,iclarke.Uw);
+    printf("%f,%f,%f\r\n",Speed_PID.target,Speed_PID.actual,Motor_CurrentState.E_theta);
 }
 
 void HmiTask(void)

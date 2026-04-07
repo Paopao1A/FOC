@@ -4,7 +4,7 @@
 void PostionToZeroDouble(void)
 {
     /* 启动PWM输出 */
-    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
 	HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_1);
@@ -43,19 +43,19 @@ void Speed_Closeloop(float TargetSpeed)
 {
     static uint8_t Speed_CulCount=0;
     Speed_CulCount++;
+	 
 
     if(Speed_CulCount == 20)//FOC定时器20khz，我们设定0.2ms获取一次速度，1ms计算一次PID
     {
-        Speed_PID.target=TargetSpeed * MOTOR_P;//转化为电角度转速r/min
-        Speed_PID.actual=Motor_CurrentState.speed_E_rpm;
+			  Speed_PID.target=TargetSpeed;//机械角度转速r/min作为对象
+        Speed_PID.actual=Motor_CurrentState.speed_M_rpm;
 
         PID_Culculate(&Speed_PID);
 
-        spwm.Theta=Motor_CurrentState.E_theta;
         spwm.Uq=Speed_PID.out;
         spwm.Ud=0.0f;
+				spwm.Theta=Motor_CurrentState.E_theta;//计算SPWM的时候要用电角度计算
 
-        SPWM_Calc(&spwm);
         Speed_CulCount=0;
     }
     

@@ -22,5 +22,8 @@ void Speed_Openloop(float TargetSpeed)
             spwm.Theta += 2 * PI;
         }
 				timecount=0;
+				
+				spwm.Ud=0.0f;
+				spwm.Uq=1.0f;
     }
 }

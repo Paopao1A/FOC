@@ -25,5 +25,7 @@ typedef struct
 }PID_t;
 
 extern PID_t Speed_PID;
+void PID_Culculate(PID_t* PID);
+void PID_Init(void);
 
 #endif

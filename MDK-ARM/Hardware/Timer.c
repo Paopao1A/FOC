@@ -5,13 +5,16 @@ Encoder_Data_t Encoder_Data;
 
 void Motor_AngleGet(void)
 {
-	Motor_CurrentState.E_theta=(float)__HAL_TIM_GET_COUNTER(&htim3) / ENCODE_PULSE * 2 * PI * MOTOR_P;
+	//Motor_CurrentState.E_theta=(float)__HAL_TIM_GET_COUNTER(&htim3) / ENCODE_PULSE * 2 * PI * MOTOR_P;
 
+	Motor_CurrentState.M_theta = (float)__HAL_TIM_GET_COUNTER(&htim3) / ENCODE_PULSE * 2.0f * PI;
+  Motor_CurrentState.E_theta = fmodf(Motor_CurrentState.M_theta * MOTOR_P, 2.0f * PI);
+	
 	if(Motor_CurrentState.E_theta >= 2 * PI)
 	{
 		Motor_CurrentState.E_theta -= 2 * PI;
 	}
-	else if(Motor_CurrentState.E_theta <= 0.0f)
+	else if(Motor_CurrentState.E_theta < 0.0f)
 	{
 		Motor_CurrentState.E_theta += 2 * PI;
 	}
@@ -20,6 +23,7 @@ void Motor_AngleGet(void)
 void Motor_SpeedGet(void)
 {
 	int16_t diff;
+	
 	Encoder_Data.Current_EncoderCnt=__HAL_TIM_GET_COUNTER(&htim3);//获取当前编码器计数值
 	diff=Encoder_Data.Current_EncoderCnt-Encoder_Data.Last_EncoderCnt;//计算前后差值
 	Encoder_Data.Last_EncoderCnt=Encoder_Data.Current_EncoderCnt;//更新旧值
