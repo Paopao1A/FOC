@@ -84,5 +84,9 @@ extern SPWM spwm;
 extern SVPWM svpmw;
 extern IPARK ipark;
 extern ICLARKE iclarke;
+extern CLARKE clarke;
+extern PARK park;
+void ClarkeCale(M_CLARKE pv);
+void ParkCale(M_PARK pv);
 
 #endif

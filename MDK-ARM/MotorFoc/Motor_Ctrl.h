@@ -32,17 +32,19 @@ typedef struct
     volatile Motor_State_t state;   // 电机当前所处控制状态
     float Rs;                       // 电机的相电阻
     float Ls;                       // 电机的相电感
-    float Ib;                       // 电机相电流
+    float Iq;                       // 电机q相电流
+    float Id;                       // 电机d相电流
     float Vb;                       // 电机相电压
     uint8_t P;                      // 电机极对数
 
 }Motor_CurrentState_t;  
 
-#define Motor_CurrentState_DEFAULTS {0.0f, 0.0f, 0.0f, 0.0f , STOP, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f} // 电机状态参数初始化
+#define Motor_CurrentState_DEFAULTS {0.0f, 0.0f, 0.0f, 0.0f , STOP, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0} // 电机状态参数初始化
 
 void Motor_Stop(void);
 void Motor_Start(void);
 void Motor_StateChoose(void);
+void AxisDq(void);
 extern Motor_CurrentState_t Motor_CurrentState; // 声明一个结构体变量用于存储电机当前状态
 
 #endif

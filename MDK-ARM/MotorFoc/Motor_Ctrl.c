@@ -3,6 +3,23 @@
 
 Motor_CurrentState_t Motor_CurrentState=Motor_CurrentState_DEFAULTS; // 定义一个结构体变量用于存储电机当前状态
 
+
+void AxisDq(void)
+{
+	clarke.Uu=AdcParaFinal.CurU;
+	clarke.Uv=AdcParaFinal.CurV;
+	clarke.Uw=AdcParaFinal.CurW;
+	ClarkeCale(&clarke);//进行克拉克变换，得到αβ坐标系的电流值
+
+	park.Alpha = clarke.Alpha;
+	park.Beta = clarke.Beta;
+	park.Theta = Motor_CurrentState.E_theta;
+	ParkCale(&park);//进行PARK变换，得到DQ坐标系的电流值
+
+	Motor_CurrentState.Iq=park.Qs;//更新电流值
+	Motor_CurrentState.Id=park.Ds;//更新电流值
+}
+
 //使用的是PWM2模式，也就是高于CCR输出高电平用于生成对称PWM
 void Motor_Stop(void)
 {
@@ -47,7 +64,13 @@ void Motor_StateChoose(void)
 			
 			case SPEED_LOOP:
 				Speed_Closeloop(spwm.Speed);//机械角度转速r/min
-			  SPWM_Calc(&spwm);
+			  	SPWM_Calc(&spwm);
+				break;
+			
+			case CUR_LOOP:
+				SpdCur_Closeloop(spwm.Speed);//机械角度转速r/min
+			//Current_Closeloop_Test();
+			  	SPWM_Calc(&spwm);
 				break;
 			
 			case STOP:

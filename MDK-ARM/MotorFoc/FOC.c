@@ -5,6 +5,8 @@ SPWM spwm=SPWM_DEFAULTS; // 初始化SPWM结构体变量
 SVPWM svpmw=SVPWM_DEFAULTS; // 初始化SVPWM结构体变量
 IPARK ipark=IPARK_DEFAULTS; // 初始化IPARK结构体变量
 ICLARKE iclarke=ICLARKE_DEFAULTS; // 初始化ICLARKE结构体变量
+CLARKE clarke=CLARKE_DEFAULTS; // 初始化CLARKE结构体变量
+PARK park=PARK_DEFAULTS; // 初始化PARK结构体变量
 
 //clarke变换
 void ClarkeCale(M_CLARKE pv)
