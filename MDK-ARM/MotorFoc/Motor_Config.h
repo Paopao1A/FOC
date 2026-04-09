@@ -8,6 +8,8 @@
 #define Ubus      12.0f      // 电源电压
 #define Nmax      7800       // 最大转速7800RPM(转/分钟)
 #define PI		  3.14159f	//Π值
+#define Anticlockwise 1 // 1: 逆时针; 0: 顺时针,默认逆时针
+#define Clockwise     0
 
 // 模式选择
 #define VR_OR_PC    1        // 1: VR电位器进行修改; 0: PC上位机进行修改

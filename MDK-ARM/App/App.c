@@ -1,5 +1,6 @@
 #include "task.h"
 
+uint8_t RotationDirection=Anticlockwise;
 void VrTask(void)
 {
     float Vr_TargetSpeed;
@@ -138,9 +139,21 @@ void HmiTask(void)
             Motor_CurrentState.state = CUR_LOOP; // 有感，速度电流闭环状态
             break;
 				
-				case KEY3_SHORT_PRESS:
-						Motor_Stop();
-						Motor_CurrentState.state = STOP; // 停止状态
+		case KEY3_SHORT_PRESS:
+			Motor_Stop();
+		    Motor_CurrentState.state = STOP; // 停止状态
+            break;
+        
+        case KEY3_DOUBLE_PRESS:
+            if(RotationDirection==Anticlockwise)
+            {
+                RotationDirection=Clockwise;
+            }
+            else
+            {
+                RotationDirection=Anticlockwise;
+            } // 切换旋转方向
+            break;
 
         default:
             break;

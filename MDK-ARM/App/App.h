@@ -6,6 +6,6 @@ void RecevToVofa(void);
 void SendToVofa(void);
 void HmiTask(void);
 
-
+extern uint8_t RotationDirection;
 
 #endif

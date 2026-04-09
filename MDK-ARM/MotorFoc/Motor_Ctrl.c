@@ -63,12 +63,26 @@ void Motor_StateChoose(void)
 				break;
 			
 			case SPEED_LOOP:
-				Speed_Closeloop(spwm.Speed);//机械角度转速r/min
+				if(RotationDirection==Anticlockwise)
+				{
+					Speed_Closeloop(spwm.Speed);//逆时针旋转
+				}
+				else
+				{
+					Speed_Closeloop(-spwm.Speed);//顺时针旋转
+				}
 			  	SPWM_Calc(&spwm);
 				break;
 			
 			case CUR_LOOP:
-				SpdCur_Closeloop(spwm.Speed);//机械角度转速r/min
+				if(RotationDirection==Anticlockwise)
+				{
+					SpdCur_Closeloop(spwm.Speed);//逆时针旋转
+				}
+				else
+				{
+					SpdCur_Closeloop(-spwm.Speed);//顺时针旋转
+				}
 			//Current_Closeloop_Test();
 			  	SPWM_Calc(&spwm);
 				break;
