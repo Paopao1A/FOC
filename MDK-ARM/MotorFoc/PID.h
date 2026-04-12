@@ -22,6 +22,9 @@ typedef struct
 	float outoffset;//输出补偿值，防止死区或者其他原因导致的输出不足
 	float accumlation_max;//积分限幅，防止积分过大导致的系统不稳定
 	float accumlation_min;
+	
+	float deadband;//输出死区，主要针对位置环以防止静止时电机颤动
+	uint8_t PosStatus;//位置环标志
 }PID_t;
 
 extern PID_t Speed_PID;

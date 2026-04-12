@@ -9,6 +9,14 @@ PID_t PosCur_PID;
 void PID_Culculate(PID_t* PID)
 {
 	PID->error_now=PID->target-PID->actual;
+
+	if(PID->PosStatus==1)//位置环需要处理角度环回问题
+	{
+		if(PID->error_now>PI)
+			PID->error_now-=2*PI;
+		else if(PID->error_now<-PI)
+			PID->error_now+=2*PI;
+	}
 	
 	if(PID->ki!=0)
 		PID->error_accumlation +=PID->ki * PID->error_now * TS;//在ki没有值的时候不进行累加，主要是为了调参过程如果突然施加ki会直接积分爆炸
@@ -20,14 +28,19 @@ void PID_Culculate(PID_t* PID)
 
 	PID->out=PID->kp*PID->error_now + PID->error_accumlation + PID->kd*(PID->error_now-PID->error_last);
 
-	//采用微分先行，利用实际值的变化率来预测未来的误差，这样可以让系统响应更快更稳定，特别是对于有较大滞后或者惯性的系统
-	//PID->out=PID->kp*PID->error_now+PID->ki*PID->error_accumlation-PID->kd*(PID->actual-PID->actual_last);
-	
-	if(PID->out>PID->outmax)
+	if(PID->out>PID->outmax)//输出限幅
 		PID->out=PID->outmax;
 	else if(PID->out<PID->outmin)
 		PID->out=PID->outmin;
 	
+	if(PID->PosStatus==1)//位置环需要处理死区以保证静止时电机不颤动
+	{
+		if(PID->out < PID->deadband && PID->out > -PID->deadband)
+		{
+			PID->out=0.0f;
+			PID->error_accumlation=0.0f;//死区内不进行积分，防止积分累计找0
+		}
+	}
 
 	PID->error_last=PID->error_now;
 	//PID->actual_last=PID->actual;
@@ -70,6 +83,8 @@ void PID_Init(void)
 	PosCur_PID.outmin=-10.0f;
 	PosCur_PID.accumlation_max=10.0f;
 	PosCur_PID.accumlation_min=-10.0f;
+	PosCur_PID.deadband=0.0001f;
+	PosCur_PID.PosStatus=1;//位置环标志位置环使能
 	PosCur_PID.kp=20.0f;
 	PosCur_PID.ki=150.0f;
 

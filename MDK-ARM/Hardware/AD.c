@@ -40,7 +40,7 @@ void ADC_Get_Origin(void)
 
 	AdcPara.Vbus = (float)ADC_Value[2] * VBUS_GAIN;
 	AdcPara.Temp = (float)ADC_Value[1];
-	AdcParaFinal.Vr = ADC_Value[4];
+	AdcPara.Vr = ADC_Value[4];
 }
 
 void ADC_Filter(void)
@@ -50,6 +50,7 @@ void ADC_Filter(void)
 	AdcParaFinal.CurW = LPF_I_RUN_B * AdcParaFinal.CurW + LPF_I_RUN_A * AdcPara.CurW;
 	AdcParaFinal.Vbus = AdcParaFinal.Vbus * LPF_I_STOP_B + AdcPara.Vbus * LPF_I_STOP_A;
 	AdcParaFinal.Temp = AdcParaFinal.Temp * LPF_I_STOP_B + AdcPara.Temp * LPF_I_STOP_A;
+	AdcParaFinal.Vr = AdcParaFinal.Vr * LPF_VR_B + AdcPara.Vr * LPF_VR_A;
 }
 
 //获取ADC数据并且进行滤波处理

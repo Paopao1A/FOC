@@ -26,10 +26,12 @@ void VrTask(void)
         
         case POS_LOOP:
             Vr_Target=AdcParaFinal.Vr / 4095.0f * POS_REF_MAX;//把电位器数值映射到0-2Π
+            /*
             if(Vr_Target<=0.2f)
                 Vr_Target=0.2f;
             if(Vr_Target>=POS_REF_MAX-0.5f)
                 Vr_Target=POS_REF_MAX-0.5f;
+             */
 			spwm.M_Theta=Vr_Target;
             break;
 
