@@ -62,12 +62,13 @@ typedef struct
 {
 	float Ud; // 二相静止坐标系 d 轴电压
 	float Uq;	// 二相静止坐标系 q 轴电压
-	float Theta;  // 电机目标电角度
+	float Theta;  // 电机目标电角度,用于FOC计算
+	float M_Theta;// 电机目标角度，用于PID计算的目标值存储
 	float Speed;  // 电机目标转速（转/分钟）
 	float Umax;		// 最大电压幅值（用于SPWM计算）
 } SPWM, *M_SPWM;
 
-#define SPWM_DEFAULTS {0, 0, 0, 0,12.0f} // 初始SPWM化参数
+#define SPWM_DEFAULTS {0, 0, 0, 0,0 ,12.0f} // 初始SPWM化参数
 
 
 typedef struct 

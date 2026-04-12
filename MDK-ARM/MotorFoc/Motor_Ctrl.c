@@ -86,6 +86,11 @@ void Motor_StateChoose(void)
 			//Current_Closeloop_Test();
 			  	SPWM_Calc(&spwm);
 				break;
+
+			case POS_LOOP:
+				PosCur_Closeloop(spwm.M_Theta);//位置电流闭环
+				SPWM_Calc(&spwm);
+				break;
 			
 			case STOP:
 				Motor_Stop();

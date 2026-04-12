@@ -152,7 +152,7 @@
           <Type>0</Type>
           <LineNumber>246</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134236722</Address>
+          <Address>134237830</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -162,38 +162,6 @@
           <Filename>../Core/Src/stm32f4xx_it.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\FOC\../Core/Src/stm32f4xx_it.c\246</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>117</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134230988</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\App\App.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\FOC\App/App.c\117</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>112</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134231006</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\App\App.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\FOC\App/App.c\112</Expression>
         </Bp>
       </Breakpoint>
       <Tracepoint>

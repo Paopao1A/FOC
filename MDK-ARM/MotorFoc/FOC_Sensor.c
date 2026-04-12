@@ -100,16 +100,16 @@ void SpdCur_Closeloop(float TargetSpeed)//速度电流串级闭环
     }
 
     // 内环电流环周期0.05ms，也就是FOC定时器周期，保证电流环的快速响应
-    Cur_Id_PID.target=0.0f;//d轴电流保持在0，q轴电流由速度环输出控制
-    Cur_Id_PID.actual=Motor_CurrentState.Id;//电流环的实际值是Id
-    PID_Culculate(&Cur_Id_PID);
+    Cur_Id_PID[0].target=0.0f;//d轴电流保持在0，q轴电流由速度环输出控制
+    Cur_Id_PID[0].actual=Motor_CurrentState.Id;//电流环的实际值是Id
+    PID_Culculate(&Cur_Id_PID[0]);
 
-    Cur_Iq_PID.target=SpdCur_PID.out;//将速度环的输出作为电流环的目标值，也就是q轴电流的目标值
-    Cur_Iq_PID.actual=Motor_CurrentState.Iq;//电流环的实际值是Iq
-    PID_Culculate(&Cur_Iq_PID);
+    Cur_Iq_PID[0].target=SpdCur_PID.out;//将速度环的输出作为电流环的目标值，也就是q轴电流的目标值
+    Cur_Iq_PID[0].actual=Motor_CurrentState.Iq;//电流环的实际值是Iq
+    PID_Culculate(&Cur_Iq_PID[0]);
 
-    spwm.Uq=Cur_Iq_PID.out;
-    spwm.Ud=Cur_Id_PID.out;
+    spwm.Uq=Cur_Iq_PID[0].out;
+    spwm.Ud=Cur_Id_PID[0].out;
     spwm.Theta=Motor_CurrentState.E_theta;//计算SPWM的时候要用电角度
 }
 
@@ -117,16 +117,46 @@ void Current_Closeloop_Test(void)
 {
     // 完全抛弃外层速度环，直接给固定的 Iq 和 Id 目标值
     // 给 0.5A 让他产生一个恒定的推力
-    Cur_Iq_PID.target = 0.5f; 
-    Cur_Id_PID.target = 0.0f; 
+    Cur_Iq_PID[0].target = 0.5f; 
+    Cur_Id_PID[0].target = 0.0f; 
 
-    Cur_Iq_PID.actual = Motor_CurrentState.Iq;
-    Cur_Id_PID.actual = Motor_CurrentState.Id;
+    Cur_Iq_PID[0].actual = Motor_CurrentState.Iq;
+    Cur_Id_PID[0].actual = Motor_CurrentState.Id;
 
-    PID_Culculate(&Cur_Iq_PID);
-    PID_Culculate(&Cur_Id_PID);
+    PID_Culculate(&Cur_Iq_PID[0]);
+    PID_Culculate(&Cur_Id_PID[0]);
 
-    spwm.Uq = Cur_Iq_PID.out;
-    spwm.Ud = Cur_Id_PID.out;
+    spwm.Uq = Cur_Iq_PID[0].out;
+    spwm.Ud = Cur_Id_PID[0].out;
     spwm.Theta = Motor_CurrentState.E_theta;
+}
+
+
+void PosCur_Closeloop(float TargetPos)//位置闭环
+{
+    static uint8_t PosCur_CulCount=0;
+    PosCur_CulCount++;
+
+    if(PosCur_CulCount == 20)//外环位置环1ms周期
+    { 
+        PosCur_PID.target=TargetPos;//位置目标值，机械角度
+        PosCur_PID.actual=Motor_CurrentState.M_theta;
+
+        PID_Culculate(&PosCur_PID);
+
+        PosCur_CulCount=0;
+    }
+
+    // 内环电流环周期0.05ms，也就是FOC定时器周期，保证电流环的快速响应
+    Cur_Id_PID[1].target=0.0f;//d轴电流保持在0，q轴电流由位置环输出控制
+    Cur_Id_PID[1].actual=Motor_CurrentState.Id;//电流环的实际值是Id
+    PID_Culculate(&Cur_Id_PID[1]);
+
+    Cur_Iq_PID[1].target=PosCur_PID.out;//将位置环的输出作为电流环的目标值，也就是q轴电流的目标值
+    Cur_Iq_PID[1].actual=Motor_CurrentState.Iq;//电流环的实际值是Iq
+    PID_Culculate(&Cur_Iq_PID[1]);
+
+    spwm.Uq=Cur_Iq_PID[1].out;
+    spwm.Ud=Cur_Id_PID[1].out;
+    spwm.Theta=Motor_CurrentState.E_theta;//计算SPWM的时候要用电角度
 }

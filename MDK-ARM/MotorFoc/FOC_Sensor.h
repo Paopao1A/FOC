@@ -5,4 +5,5 @@ void PostionToZeroDouble(void);
 void Speed_Closeloop(float TargetSpeed);
 void SpdCur_Closeloop(float TargetSpeed);
 void Current_Closeloop_Test(void);
+void PosCur_Closeloop(float TargetPos);
 #endif

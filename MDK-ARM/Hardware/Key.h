@@ -28,7 +28,7 @@ typedef struct
 
 #define CONFIRM_TIME                 10       // 按键消抖时间窗10ms
 #define DOUBLE_CLICK_INTERVAL_TIME   300      // 两次抬起时间窗300ms，用来判断是否双击
-#define LONGPRESS_TIME               2000     // 长按时间窗2000ms
+#define LONGPRESS_TIME               1500     // 长按时间窗1500ms
 
 #define KEY1_SHORT_PRESS   0X01
 #define KEY1_DOUBLE_PRESS  0X51

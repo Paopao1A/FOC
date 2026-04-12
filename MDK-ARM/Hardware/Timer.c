@@ -8,7 +8,7 @@ void Motor_AngleGet(void)
 	//Motor_CurrentState.E_theta=(float)__HAL_TIM_GET_COUNTER(&htim3) / ENCODE_PULSE * 2 * PI * MOTOR_P;
 
 	Motor_CurrentState.M_theta = (float)__HAL_TIM_GET_COUNTER(&htim3) / ENCODE_PULSE * 2.0f * PI;
-  Motor_CurrentState.E_theta = fmodf(Motor_CurrentState.M_theta * MOTOR_P, 2.0f * PI);
+  Motor_CurrentState.E_theta = fmodf(Motor_CurrentState.M_theta * MOTOR_P, 2.0f * PI);//角度取余，保证在0-2Π之间
 	
 	if(Motor_CurrentState.E_theta >= 2 * PI)
 	{

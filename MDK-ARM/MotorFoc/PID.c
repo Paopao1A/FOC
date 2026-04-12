@@ -1,9 +1,10 @@
 #include "task.h"
 
 PID_t Speed_PID;
-PID_t Cur_Id_PID;
-PID_t Cur_Iq_PID;
+PID_t Cur_Id_PID[2];
+PID_t Cur_Iq_PID[2];
 PID_t SpdCur_PID;
+PID_t PosCur_PID;
 
 void PID_Culculate(PID_t* PID)
 {
@@ -50,17 +51,39 @@ void PID_Init(void)
 	SpdCur_PID.kp=0.05f;
 	SpdCur_PID.ki=0.1f;
 
-	Cur_Id_PID.outmax=6.0f;
-	Cur_Id_PID.outmin=-6.0f;
-	Cur_Id_PID.accumlation_max=6.0f;
-	Cur_Id_PID.accumlation_min=-6.0f;
-	Cur_Id_PID.kp=0.5f;
-	Cur_Id_PID.ki=1.0f;
+	Cur_Id_PID[0].outmax=6.0f;
+	Cur_Id_PID[0].outmin=-6.0f;
+	Cur_Id_PID[0].accumlation_max=6.0f;
+	Cur_Id_PID[0].accumlation_min=-6.0f;
+	Cur_Id_PID[0].kp=0.5f;
+	Cur_Id_PID[0].ki=1.0f;
 
-	Cur_Iq_PID.outmax=6.0f;
-	Cur_Iq_PID.outmin=-6.0f;
-	Cur_Iq_PID.accumlation_max=6.0f;
-	Cur_Iq_PID.accumlation_min=-6.0f;
-	Cur_Iq_PID.kp=0.5f;
-	Cur_Iq_PID.ki=1.0f;
+	Cur_Iq_PID[0].outmax=6.0f;
+	Cur_Iq_PID[0].outmin=-6.0f;
+	Cur_Iq_PID[0].accumlation_max=6.0f;
+	Cur_Iq_PID[0].accumlation_min=-6.0f;
+	Cur_Iq_PID[0].kp=0.5f;
+	Cur_Iq_PID[0].ki=1.0f;
+
+	//位置电流串级环参数初始化
+	PosCur_PID.outmax=10.0f;
+	PosCur_PID.outmin=-10.0f;
+	PosCur_PID.accumlation_max=10.0f;
+	PosCur_PID.accumlation_min=-10.0f;
+	PosCur_PID.kp=20.0f;
+	PosCur_PID.ki=150.0f;
+
+	Cur_Id_PID[1].outmax=6.0f;
+	Cur_Id_PID[1].outmin=-6.0f;
+	Cur_Id_PID[1].accumlation_max=6.0f;
+	Cur_Id_PID[1].accumlation_min=-6.0f;
+	Cur_Id_PID[1].kp=0.1f;
+	Cur_Id_PID[1].ki=0.01f;
+
+	Cur_Iq_PID[1].outmax=6.0f;
+	Cur_Iq_PID[1].outmin=-6.0f;
+	Cur_Iq_PID[1].accumlation_max=6.0f;
+	Cur_Iq_PID[1].accumlation_min=-6.0f;
+	Cur_Iq_PID[1].kp=0.1f;
+	Cur_Iq_PID[1].ki=0.01f;
 }

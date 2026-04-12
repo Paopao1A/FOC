@@ -25,9 +25,10 @@ typedef struct
 }PID_t;
 
 extern PID_t Speed_PID;
-extern PID_t Cur_Id_PID;
-extern PID_t Cur_Iq_PID;
+extern PID_t Cur_Id_PID[2];
+extern PID_t Cur_Iq_PID[2];
 extern PID_t SpdCur_PID;
+extern PID_t PosCur_PID;
 
 void PID_Culculate(PID_t* PID);
 void PID_Init(void);
