@@ -11,17 +11,35 @@ void VrTask(void)
 
         case SPEED_OPENLOOP:
             Vr_Target=AdcParaFinal.Vr / 4095.0f * OPENSPD_REF_MAX;//把电位器数值映射到0-200rpm
+           
+            #if spwm_svpwm
             spwm.Speed=Vr_Target;
+            #else
+            svpwm.Speed=Vr_Target;
+            #endif
+            
             break;
         
         case SPEED_LOOP:
             Vr_Target=AdcParaFinal.Vr / 4095.0f * SPD_REF_MAX;//把电位器数值映射到0-2000rpm
+            
+            #if spwm_svpwm
             spwm.Speed=Vr_Target;
+            #else
+            svpwm.Speed=Vr_Target;
+            #endif
+            
             break;
         
         case CUR_LOOP:
             Vr_Target=AdcParaFinal.Vr / 4095.0f * CUR_REF_MAX;//把电位器数值映射到0-2000rpm
+            
+            #if spwm_svpwm
             spwm.Speed=Vr_Target;
+            #else
+            svpwm.Speed=Vr_Target;
+            #endif
+            
             break;
         
         case POS_LOOP:
@@ -32,7 +50,12 @@ void VrTask(void)
             if(Vr_Target>=POS_REF_MAX-0.5f)
                 Vr_Target=POS_REF_MAX-0.5f;
              */
-			spwm.M_Theta=Vr_Target;
+			
+            #if spwm_svpwm
+						spwm.M_Theta=Vr_Target;
+						#else
+						svpwm.M_Theta=Vr_Target;
+            #endif
             break;
 
         default:
@@ -182,7 +205,7 @@ void RecevToVofa(void)
 
 void SendToVofa(void)
 {
-    printf("%f,%f\r\n",PosCur_PID.target,PosCur_PID.actual);
+    printf("%f,%f\r\n",AdcParaFinal.CurU,AdcParaFinal.CurV);
 }
 
 void HmiTask(void)

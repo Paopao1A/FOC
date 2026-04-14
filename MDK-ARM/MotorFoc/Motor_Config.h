@@ -13,7 +13,7 @@
 
 // 模式选择
 #define VR_OR_PC    1        // 1: VR电位器进行修改; 0: PC上位机进行修改
-#define spwm_svpwm  1        // 1: 采用SPWM; 0: 采用SVPWM
+#define spwm_svpwm  0        // 1: 采用SPWM; 0: 采用SVPWM
 
 //定时器参数
 #define TIM1_ARR_VALUE 8400  // 定时器1的ARR值，用于生成对称PWM

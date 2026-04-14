@@ -1,7 +1,7 @@
-#include "task.h"
+﻿#include "task.h"
 
 
-Motor_CurrentState_t Motor_CurrentState=Motor_CurrentState_DEFAULTS; // 定义一个结构体变量用于存储电机当前状态
+Motor_CurrentState_t Motor_CurrentState=Motor_CurrentState_DEFAULTS; // 初始化电机状态结构体变量
 
 
 void AxisDq(void)
@@ -9,15 +9,15 @@ void AxisDq(void)
 	clarke.Uu=AdcParaFinal.CurU;
 	clarke.Uv=AdcParaFinal.CurV;
 	clarke.Uw=AdcParaFinal.CurW;
-	ClarkeCale(&clarke);//进行克拉克变换，得到αβ坐标系的电流值
+	ClarkeCale(&clarke);//进行Clarke变换，得到Alpha和Beta分量
 
 	park.Alpha = clarke.Alpha;
 	park.Beta = clarke.Beta;
 	park.Theta = Motor_CurrentState.E_theta;
-	ParkCale(&park);//进行PARK变换，得到DQ坐标系的电流值
+	ParkCale(&park);//进行Park变换，得到d轴和q轴分量
 
-	Motor_CurrentState.Iq=park.Qs;//更新电流值
-	Motor_CurrentState.Id=park.Ds;//更新电流值
+	Motor_CurrentState.Iq=park.Qs;//q轴电流分量
+	Motor_CurrentState.Id=park.Ds;//d轴电流分量
 }
 
 //使用的是PWM2模式，也就是高于CCR输出高电平用于生成对称PWM
@@ -26,22 +26,21 @@ void Motor_Stop(void)
     HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
     HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
     HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_3);
-    // 禁用互补通道（CH1N/CH2N/CH3N，开启互补通道必须加）
+    // 关闭H1N/CH2N/CH3N
     HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_1);
     HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_2);
     HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_3);
 
-    // 步骤2：（双重保险）将比较值设为ARR（PWM模式2下输出低电平）
-    // 注意：此时通道已禁用，这一步是防止后续误开启通道时输出高电平
+	//设置占空比为0，确保所有PWM输出为低电平
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, TIM1_ARR_VALUE);
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, TIM1_ARR_VALUE);
     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, TIM1_ARR_VALUE);
 }
 
-// 启动电机
+// 电机启动函数，开启PWM输出
 void Motor_Start(void)
 {
-	// Fault_Detection();				//启动前先进行故障检测
+	// Fault_Detection();				// 故障检测
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
@@ -58,38 +57,65 @@ void Motor_StateChoose(void)
 				break;
 			
 			case SPEED_OPENLOOP:
-				Speed_Openloop(spwm.Speed);//机械角度转速r/mins
+				Speed_Openloop(spwm.Speed);
 				SPWM_Calc(&spwm);
 				break;
 			
 			case SPEED_LOOP:
 				if(RotationDirection==Anticlockwise)
 				{
+					#if spwm_svpwm
 					Speed_Closeloop(spwm.Speed);//逆时针旋转
+					SPWM_Calc(&spwm);
+					#else
+					Speed_Closeloop(svpwm.Speed);//逆时针旋转
+					SVPWM_Calc(&svpwm);
+					#endif
 				}
 				else
 				{
+					#if spwm_svpwm
 					Speed_Closeloop(-spwm.Speed);//顺时针旋转
+					SPWM_Calc(&spwm);
+					#else
+					Speed_Closeloop(-svpwm.Speed);//顺时针旋转
+					SVPWM_Calc(&svpwm);
+					#endif
 				}
-			  	SPWM_Calc(&spwm);
 				break;
 			
 			case CUR_LOOP:
 				if(RotationDirection==Anticlockwise)
 				{
+					#if spwm_svpwm
 					SpdCur_Closeloop(spwm.Speed);//逆时针旋转
+					SPWM_Calc(&spwm);
+					#else
+					SpdCur_Closeloop(svpwm.Speed);//逆时针旋转
+					SVPWM_Calc(&svpwm);
+					#endif
 				}
 				else
 				{
+					#if spwm_svpwm
 					SpdCur_Closeloop(-spwm.Speed);//顺时针旋转
+					SPWM_Calc(&spwm);
+					#else
+					SpdCur_Closeloop(-svpwm.Speed);//顺时针旋转
+					SVPWM_Calc(&svpwm);
+					#endif
 				}
 			//Current_Closeloop_Test();
-			  	SPWM_Calc(&spwm);
 				break;
 
 			case POS_LOOP:
-				PosCur_Closeloop(spwm.M_Theta);//位置电流闭环
+				#if spwm_svpwm
+				PosCur_Closeloop(spwm.M_Theta);
 				SPWM_Calc(&spwm);
+				#else
+				PosCur_Closeloop(svpwm.M_Theta);
+				SVPWM_Calc(&svpwm);
+				#endif
 				break;
 			
 			case STOP:
@@ -102,3 +128,4 @@ void Motor_StateChoose(void)
 
 		}
 }
+

@@ -1,48 +1,40 @@
 #include "task.h"
 
+SPWM spwm = SPWM_DEFAULTS;
+SVPWM svpwm = SVPWM_DEFAULTS;
+IPARK ipark = IPARK_DEFAULTS;
+ICLARKE iclarke = ICLARKE_DEFAULTS;
+CLARKE clarke = CLARKE_DEFAULTS;
+PARK park = PARK_DEFAULTS;
 
-SPWM spwm=SPWM_DEFAULTS; // 初始化SPWM结构体变量
-SVPWM svpmw=SVPWM_DEFAULTS; // 初始化SVPWM结构体变量
-IPARK ipark=IPARK_DEFAULTS; // 初始化IPARK结构体变量
-ICLARKE iclarke=ICLARKE_DEFAULTS; // 初始化ICLARKE结构体变量
-CLARKE clarke=CLARKE_DEFAULTS; // 初始化CLARKE结构体变量
-PARK park=PARK_DEFAULTS; // 初始化PARK结构体变量
-
-//clarke变换
+/* Clarke 变换：三相静止坐标 -> 两相静止坐标(alpha,beta) */
 void ClarkeCale(M_CLARKE pv)
 {
-    // 空指针检查
     if (pv == NULL)
     {
         return;
     }
 
-    // 标准Clarke变换公式（利用三相电流平衡：Iw = -Iu - Iv）
-    // α = Iu
-    // β = (2Iv + Iu) / √3 = Iu*(1/√3) + Iv*(2/√3)
     pv->Alpha = CLARKE_COEF_1 * pv->Uu + CLARKE_COEF_2 * pv->Uv + CLARKE_COEF_2 * pv->Uw;
-    pv->Beta  = CLARKE_COEF_3 * (pv->Uv - pv->Uw);
+    pv->Beta = CLARKE_COEF_3 * (pv->Uv - pv->Uw);
 }
 
-//Clarke逆变换
+/* 逆 Clarke 变换：两相静止坐标(alpha,beta) -> 三相静止坐标 */
 void IClarkeCale(M_ICLARKE pv)
 {
-    // 空指针检查（避免运行时崩溃）
     if (pv == NULL)
     {
         return;
     }
 
-    // 执行逆克拉克变换计算
-    pv->Uu = INV_CLARKE_COEF_1 * pv->Alpha;                    // Uu = α
-    pv->Uv = INV_CLARKE_COEF_2 * pv->Alpha + INV_CLARKE_COEF_3 * pv->Beta; // Uv = -0.5α + (√3/2)β
-    pv->Uw = INV_CLARKE_COEF_2 * pv->Alpha + INV_CLARKE_COEF_4 * pv->Beta; // Uw = -0.5α - (√3/2)β
+    pv->Uu = INV_CLARKE_COEF_1 * pv->Alpha;
+    pv->Uv = INV_CLARKE_COEF_2 * pv->Alpha + INV_CLARKE_COEF_3 * pv->Beta;
+    pv->Uw = INV_CLARKE_COEF_2 * pv->Alpha + INV_CLARKE_COEF_4 * pv->Beta;
 }
 
-//park变换
+/* Park 变换：alpha,beta -> d,q（旋转坐标） */
 void ParkCale(M_PARK pv)
 {
-    // 空指针检查
     if (pv == NULL)
     {
         return;
@@ -51,15 +43,13 @@ void ParkCale(M_PARK pv)
     float cos_theta = arm_cos_f32(pv->Theta);
     float sin_theta = arm_sin_f32(pv->Theta);
 
-    // 标准Park变换公式
-    pv->Ds = cos_theta * pv->Alpha + sin_theta * pv->Beta;  // d轴 = α*cosθ + β*sinθ
-    pv->Qs = -sin_theta * pv->Alpha + cos_theta * pv->Beta; // q轴 = -α*sinθ + β*cosθ
+    pv->Ds = cos_theta * pv->Alpha + sin_theta * pv->Beta;
+    pv->Qs = -sin_theta * pv->Alpha + cos_theta * pv->Beta;
 }
 
-//park逆变换
+/* 逆 Park 变换：d,q -> alpha,beta */
 void IPARK_Cale(M_IPARK pv)
 {
-    // 空指针检查
     if (pv == NULL)
     {
         return;
@@ -68,42 +58,41 @@ void IPARK_Cale(M_IPARK pv)
     float cos_theta = arm_cos_f32(pv->Theta);
     float sin_theta = arm_sin_f32(pv->Theta);
 
-    // 标准IPark变换公式（Park逆变换）
-    pv->Alpha = cos_theta * pv->Ds - sin_theta * pv->Qs;  // α = d*cosθ - q*sinθ
-    pv->Beta  = sin_theta * pv->Ds + cos_theta * pv->Qs;  // β = d*sinθ + q*cosθ
+    pv->Alpha = cos_theta * pv->Ds - sin_theta * pv->Qs;
+    pv->Beta = sin_theta * pv->Ds + cos_theta * pv->Qs;
 }
 
+/* 经典 SPWM：dq -> alpha,beta -> 三相占空比 */
 void SPWM_Calc(M_SPWM pv)
 {
-    // 空指针检查
     if (pv == NULL)
     {
         return;
     }
 
-    ipark.Theta=pv->Theta;
-    ipark.Ds=pv->Ud;
-    ipark.Qs=pv->Uq;
+    ipark.Theta = pv->Theta;
+    ipark.Ds = pv->Ud;
+    ipark.Qs = pv->Uq;
     IPARK_Cale(&ipark);
 
-    iclarke.Alpha=ipark.Alpha;
-    iclarke.Beta=ipark.Beta;
+    iclarke.Alpha = ipark.Alpha;
+    iclarke.Beta = ipark.Beta;
     IClarkeCale(&iclarke);
 
-    iclarke.Uu += Ubus/2.0f; //电压抬升形成全正的电压
-    iclarke.Uv += Ubus/2.0f;
-    iclarke.Uw += Ubus/2.0f;
+    iclarke.Uu += Ubus / 2.0f;
+    iclarke.Uv += Ubus / 2.0f;
+    iclarke.Uw += Ubus / 2.0f;
 
     if (iclarke.Uu < 0.0f) iclarke.Uu = 0.0f;
-    if (iclarke.Uu > pv->Umax)  iclarke.Uu = pv->Umax;
+    if (iclarke.Uu > pv->Umax) iclarke.Uu = pv->Umax;
 
     if (iclarke.Uv < 0.0f) iclarke.Uv = 0.0f;
-    if (iclarke.Uv > pv->Umax)  iclarke.Uv = pv->Umax;
+    if (iclarke.Uv > pv->Umax) iclarke.Uv = pv->Umax;
 
     if (iclarke.Uw < 0.0f) iclarke.Uw = 0.0f;
-    if (iclarke.Uw > pv->Umax)  iclarke.Uw = pv->Umax;
+    if (iclarke.Uw > pv->Umax) iclarke.Uw = pv->Umax;
 
-    iclarke.PWMu = (uint16_t)(TIM1_ARR_VALUE - iclarke.Uu / Ubus * TIM1_ARR_VALUE);//PWM模式二，高于设定值才输出高电平
+    iclarke.PWMu = (uint16_t)(TIM1_ARR_VALUE - iclarke.Uu / Ubus * TIM1_ARR_VALUE);
     iclarke.PWMv = (uint16_t)(TIM1_ARR_VALUE - iclarke.Uv / Ubus * TIM1_ARR_VALUE);
     iclarke.PWMw = (uint16_t)(TIM1_ARR_VALUE - iclarke.Uw / Ubus * TIM1_ARR_VALUE);
 
@@ -114,9 +103,67 @@ void SPWM_Calc(M_SPWM pv)
 
 void SVPWM_Calc(M_SVPWM pv)
 {
-    // 空指针检查
     if (pv == NULL)
     {
         return;
     }
+
+    /* 1) dq -> alpha,beta */
+    ipark.Theta = pv->Theta;
+    ipark.Ds = pv->Ud;
+    ipark.Qs = pv->Uq;
+    IPARK_Cale(&ipark);
+
+    /* 2) 按参考工程的 u1/u2/u3 法做扇区判断与 Tabc 计算 */
+    float Ualpha = ipark.Alpha;
+    float Ubeta = ipark.Beta;
+    float u1 = Ubeta;
+    float u2 = Ubeta * 0.5f + Ualpha * 0.8660254f;
+    float u3 = u2 - u1;
+
+    uint8_t sector = 3;
+    float Ta = 0.0f, Tb = 0.0f, Tc = 0.0f;
+
+    sector = (u2 > 0.0f) ? (uint8_t)(sector - 1) : sector;
+    sector = (u3 > 0.0f) ? (uint8_t)(sector - 1) : sector;
+    sector = (u1 < 0.0f) ? (uint8_t)(7 - sector) : sector;
+
+    if ((sector == 1) || (sector == 4))
+    {
+        Ta = u2;
+        Tb = u1 - u3;
+        Tc = -u2;
+    }
+    else if ((sector == 2) || (sector == 5))
+    {
+        Ta = u3 + u2;
+        Tb = u1;
+        Tc = -u1;
+    }
+    else if ((sector == 3) || (sector == 6))
+    {
+        Ta = u3;
+        Tb = -u3;
+        Tc = -(u1 + u2);
+    }
+
+    /* 3) 将电压量归一化到 duty：Ta/Tb/Tc -> [0,1] */
+    /* 1/(Ubus/sqrt(3)) = sqrt(3)/Ubus */
+    float km_backw = (Ubus > 0.0f) ? (1.7320508f / Ubus) : 0.0f;
+    float duty_u = Ta * km_backw * 0.5f + 0.5f;
+    float duty_v = Tb * km_backw * 0.5f + 0.5f;
+    float duty_w = Tc * km_backw * 0.5f + 0.5f;
+
+    if (duty_u < 0.0f) duty_u = 0.0f; else if (duty_u > 1.0f) duty_u = 1.0f;
+    if (duty_v < 0.0f) duty_v = 0.0f; else if (duty_v > 1.0f) duty_v = 1.0f;
+    if (duty_w < 0.0f) duty_w = 0.0f; else if (duty_w > 1.0f) duty_w = 1.0f;
+
+    /* 4) 输出到定时器：本工程是 PWM2 模式，CCR 与 duty 反向 */
+    uint16_t PWMu = (uint16_t)((1.0f - duty_u) * TIM1_ARR_VALUE);
+    uint16_t PWMv = (uint16_t)((1.0f - duty_v) * TIM1_ARR_VALUE);
+    uint16_t PWMw = (uint16_t)((1.0f - duty_w) * TIM1_ARR_VALUE);
+
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, PWMu);
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, PWMv);
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, PWMw);
 }

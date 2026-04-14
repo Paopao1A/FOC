@@ -73,16 +73,20 @@ typedef struct
 
 typedef struct 
 {
-	float Ualpha; // 二相静止坐标系 Alpha 轴电压
-	float Ubeta;	// 二相静止坐标系 Beta 轴电压
+	float Ud; // 二相静止坐标系 d 轴电压
+	float Uq;	// 二相静止坐标系 q 轴电压
+	float Theta;  // 电机目标电角度,用于FOC计算
+	float M_Theta;// 电机目标角度，用于PID计算的目标值存储
+	float Speed;  // 电机目标转速（转/分钟）
 	float Umax;		// 最大电压幅值（用于SPWM计算）
 } SVPWM, *M_SVPWM;
 
-#define SVPWM_DEFAULTS {0, 0, 0} // 初始SVPWM化参数
+#define SVPWM_DEFAULTS {0, 0, 0, 0, 0, 12.0f} // 初始SVPWM化参数
 
 void SPWM_Calc(M_SPWM pv);
+void SVPWM_Calc(M_SVPWM pv);
 extern SPWM spwm;
-extern SVPWM svpmw;
+extern SVPWM svpwm;
 extern IPARK ipark;
 extern ICLARKE iclarke;
 extern CLARKE clarke;

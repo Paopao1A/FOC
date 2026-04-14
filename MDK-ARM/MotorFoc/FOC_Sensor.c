@@ -22,13 +22,13 @@ void PostionToZeroDouble(void)
     SPWM_Calc(&spwm);
     HAL_Delay(1000);//二次调零，最后使Uα与Ud重合
 #else
-    svpwm.Ualpha=0;
-    svpwm.Ubeta=0.5f;
+    svpwm.Ud=0;
+    svpwm.Uq=0.5f;
     SVPWM_Calc(&svpwm);
     HAL_Delay(1000);
 
-    svpwm.Ualpha=0.5f;
-    svpwm.Ubeta=0;
+    svpwm.Ud=0.5f;
+    svpwm.Uq=0;
     SVPWM_Calc(&svpwm);
     HAL_Delay(1000);//二次调零，最后使Uα与Ud重合
 #endif
@@ -63,9 +63,15 @@ void Speed_Closeloop(float TargetSpeed)//速度闭环，电流开环
 
         PID_Culculate(&Speed_PID);
 
+        #if spwm_svpwm
         spwm.Theta=Motor_CurrentState.E_theta;//计算SPWM的时候要用电角度计算
         spwm.Uq=Speed_PID.out;
         spwm.Ud=0.0f;
+        #else
+        svpwm.Theta=Motor_CurrentState.E_theta;//计算SVPWM的时候要用
+        svpwm.Uq=Speed_PID.out;
+        svpwm.Ud=0.0f;
+        #endif
 
         Speed_CulCount=0;
     }
@@ -107,10 +113,16 @@ void SpdCur_Closeloop(float TargetSpeed)//速度电流串级闭环
     Cur_Iq_PID[0].target=SpdCur_PID.out;//将速度环的输出作为电流环的目标值，也就是q轴电流的目标值
     Cur_Iq_PID[0].actual=Motor_CurrentState.Iq;//电流环的实际值是Iq
     PID_Culculate(&Cur_Iq_PID[0]);
-
-    spwm.Uq=Cur_Iq_PID[0].out;
-    spwm.Ud=Cur_Id_PID[0].out;
-    spwm.Theta=Motor_CurrentState.E_theta;//计算SPWM的时候要用电角度
+    
+    #if spwm_svpwm
+        spwm.Uq=Cur_Iq_PID[0].out;
+        spwm.Ud=Cur_Id_PID[0].out;
+        spwm.Theta=Motor_CurrentState.E_theta;//计算SPWM的时候要用电角度
+    #else
+        svpwm.Uq=Cur_Iq_PID[0].out;
+        svpwm.Ud=Cur_Id_PID[0].out;
+        svpwm.Theta=Motor_CurrentState.E_theta;//计算SVPWM的时候要用
+    #endif
 }
 
 void Current_Closeloop_Test(void)
@@ -155,8 +167,14 @@ void PosCur_Closeloop(float TargetPos)//位置闭环
     Cur_Iq_PID[1].target=PosCur_PID.out;//将位置环的输出作为电流环的目标值，也就是q轴电流的目标值
     Cur_Iq_PID[1].actual=Motor_CurrentState.Iq;//电流环的实际值是Iq
     PID_Culculate(&Cur_Iq_PID[1]);
-
-    spwm.Uq=Cur_Iq_PID[1].out;
-    spwm.Ud=Cur_Id_PID[1].out;
-    spwm.Theta=Motor_CurrentState.E_theta;//计算SPWM的时候要用电角度
+    
+    #if spwm_svpwm
+        spwm.Uq=Cur_Iq_PID[1].out;
+        spwm.Ud=Cur_Id_PID[1].out;
+        spwm.Theta=Motor_CurrentState.E_theta;//计算SPWM的时候要用电角度
+    #else
+        svpwm.Uq=Cur_Iq_PID[1].out;
+        svpwm.Ud=Cur_Id_PID[1].out;
+        svpwm.Theta=Motor_CurrentState.E_theta;//计算SVPWM的时候要用
+    #endif  
 }
